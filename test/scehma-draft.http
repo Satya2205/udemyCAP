@@ -1,0 +1,57 @@
+@server=http://localhost:4004
+
+@service=/odata/v4/employee-srv
+
+###
+# If draft is enabled, the GET request returns only active records (IsActiveEntity = true)
+GET {{server}}{{service}}/Employee
+
+
+###
+# To retrieve all draft records (IsActiveEntity = false)
+GET {{server}}{{service}}/Employee?$filter=IsActiveEntity eq false
+
+###
+# If draft is enabled, two POST operations are required.
+# First POST creates a draft record (IsActiveEntity = false).
+POST {{server}}{{service}}/Employee
+Content-Type: application/json
+
+{
+    "firstName": "Satya2",
+    "lastName": "Ranjan2",
+    "email": "satya2@gmail.com",
+    "phone": 1234,
+    "company_ID": 10
+}
+
+###
+# Second POST activates the draft (IsActiveEntity = true).
+# Call to make IsActiveEntity value to true(So that we can fetch in the GET call)
+POST {{server}}{{service}}/Employee(ID=55d0b9e2-155d-4349-8cc4-3f617bca8753,IsActiveEntity=false)/draftActivate
+Content-Type: application/json
+
+###
+# Creates a draft copy (IsActiveEntity = false) from the active record for editing.
+# The original active record remains unchanged until the draft is activated.
+POST {{server}}{{service}}/Employee(ID=55d0b9e2-155d-4349-8cc4-3f617bca8753,IsActiveEntity=true)/draftEdit
+Content-Type: application/json
+
+###
+# PATCH works only on draft records (IsActiveEntity = false).
+PATCH {{server}}{{service}}/Employee(ID=55d0b9e2-155d-4349-8cc4-3f617bca8753,IsActiveEntity=false)
+Content-Type: application/json
+
+{
+    "email": "satya4@gmail.com",
+    "phone": 1234567
+}
+
+###
+# DELETE → Deletes DRAFT record(IsActiveEntity=false)
+DELETE {{server}}{{service}}/Employee(ID=55d0b9e2-155d-4349-8cc4-3f617bca8753,IsActiveEntity=false)
+
+
+###
+# DELETE → Deletes ACTIVE record(IsActiveEntity=true)
+DELETE {{server}}{{service}}/Employee(ID=55d0b9e2-155d-4349-8cc4-3f617bca8753,IsActiveEntity=true)
