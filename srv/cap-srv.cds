@@ -8,7 +8,7 @@ service EmployeeSrv{
 }
 
 service CompanyService{
-    entity Company as projection on myCapSrv.Company;
+    @readonly entity Company as projection on myCapSrv.Company;
     entity Contact as projection on myCapSrv.Contacts;
 }
 

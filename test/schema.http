@@ -1,0 +1,15 @@
+@server=http://localhost:4004
+@service=/odata/v4/company
+
+###
+GET {{server}}{{service}}/Company
+
+###
+POST {{server}}{{service}}/Company
+Content-Type: application/json
+
+{
+    "ID": 14,
+    "companyName": "Test",
+    "countryName": "India"
+}
